@@ -50,9 +50,8 @@ public struct HorizontalValueTrack<V, ValueView: View, TrackShape: InsettableSha
                     .mask(
                         self.trackShape.frame(width: geometry.size.width, height: geometry.size.height)
                 )
-                .drawingGroup()
         }
-
+        .frame(minHeight: 1)
     }
 }
 

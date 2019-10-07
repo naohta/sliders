@@ -1,6 +1,7 @@
 import Foundation
 
 final class Model: ObservableObject {
+    var value = 0.5
     @Published var value1 = 0.5
     @Published var value2 = 0.5
     @Published var value3 = 0.5
