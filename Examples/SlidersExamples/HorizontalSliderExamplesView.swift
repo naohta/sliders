@@ -9,32 +9,32 @@ struct HorizontalSliderExamplesView: View {
             Group {
                 
                 //Slider(value: $model.value1, in: 0.0...1.0)
-                XSlider(value: $model.value1, in: 0.0...1.0)
+                HSlider(value: $model.value1, in: 0.0...1.0)
                 
                 //HTrack(value: $model.value1).frame(height: 8).animation(.spring())
 //
-//                XTrack(value: model.value1, valueView:
+//                HTrack(value: model.value1, valueView:
 //                    LinearGradient(gradient: Gradient(colors: [.red, .green]), startPoint: .leading, endPoint: .trailing)
 //                )
 //                .frame(height: 8)
 //                .background(Color.white)
 //                .cornerRadius(8)
                 
-                XTrack(value: model.value1)
+                HTrack(value: model.value1)
                 
-                XSlider(value: $model.value1, in: 0.0...1.0)
+                HSlider(value: $model.value1, in: 0.0...1.0)
                 
-                XSlider(value: $model.value2, trackView:
+                HSlider(value: $model.value2, trackView:
                     LinearGradient(gradient: Gradient(colors: [.red, .orange, .yellow, .green, .blue, .purple, .pink]), startPoint: .leading, endPoint: .trailing)
                         .frame(height: 8)
                         .cornerRadius(4)
                 )
                 
 
-                XSlider(
+                HSlider(
                     value: $model.value3,
                     trackView:
-                        XTrack(
+                        HTrack(
                             value: model.value3,
                             valueView: Rectangle()
                                 .foregroundColor(.accentColor)
@@ -50,7 +50,7 @@ struct HorizontalSliderExamplesView: View {
                     thumbSize: CGSize(width: 16, height: 16)
                 )
                 
-                XHorizontalValueSlider(
+                HorizontalValueSlider(
                     value: $model.value4,
                     trackView:
                         LinearGradient(gradient: Gradient(colors: [.purple, .blue, .purple]), startPoint: .leading, endPoint: .trailing)
@@ -61,10 +61,10 @@ struct HorizontalSliderExamplesView: View {
                     thumbSize: CGSize(width: 48, height: 16)
                 )
                 
-                XHorizontalValueSlider(
+                HorizontalValueSlider(
                     value: $model.value5,
                     trackView:
-                        XHorizontalValueTrack(
+                        HorizontalValueTrack(
                             value: model.value5,
                             valueView: LinearGradient(gradient: Gradient(colors: [.purple, .blue, .purple]), startPoint: .leading, endPoint: .trailing),
                             maskView: Rectangle()

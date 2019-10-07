@@ -1,8 +1,8 @@
 import SwiftUI
 
-public typealias XSlider = XHorizontalValueSlider
+public typealias HSlider = HorizontalValueSlider
 
-public struct XHorizontalValueSlider<V, TrackView: View, ThumbView : View>: View where V : BinaryFloatingPoint, V.Stride : BinaryFloatingPoint {
+public struct HorizontalValueSlider<V, TrackView: View, ThumbView : View>: View where V : BinaryFloatingPoint, V.Stride : BinaryFloatingPoint {
     let value: Binding<V>
     let bounds: ClosedRange<CGFloat>
     let step: CGFloat
@@ -78,7 +78,7 @@ public struct XHorizontalValueSlider<V, TrackView: View, ThumbView : View>: View
 
 // MARK: Inits
 
-extension XHorizontalValueSlider {
+extension HorizontalValueSlider {
     public init(value: Binding<V>, in bounds: ClosedRange<V> = 0.0...1.0, step: V.Stride = 0.001, trackView: TrackView, thumbView: ThumbView, thumbSize: CGSize = CGSize(width: 27, height: 27), onEditingChanged: @escaping (Bool) -> Void = { _ in }) {
         self.value = value
         self.bounds = CGFloat(bounds.lowerBound)...CGFloat(bounds.upperBound)
@@ -90,36 +90,19 @@ extension XHorizontalValueSlider {
     }
 }
 
-extension XHorizontalValueSlider where TrackView == DefaultHorizontalTrack<V>, ThumbView == DefaultThumb {
+extension HorizontalValueSlider where TrackView == DefaultHorizontalValueTrack<V>, ThumbView == DefaultThumb {
     public init(value: Binding<V>, in bounds: ClosedRange<V> = 0.0...1.0, step: V.Stride = 0.001, thumbSize: CGSize = CGSize(width: 27, height: 27), onEditingChanged: @escaping (Bool) -> Void = { _ in }) {
-        self.init(value: value, in: bounds, step: step, trackView: DefaultHorizontalTrack(value: value.wrappedValue), thumbView: DefaultThumb(), thumbSize: thumbSize, onEditingChanged: onEditingChanged)
+        self.init(value: value, in: bounds, step: step, trackView: DefaultHorizontalValueTrack(value: value.wrappedValue), thumbView: DefaultThumb(), thumbSize: thumbSize, onEditingChanged: onEditingChanged)
     }
 }
 
-extension XHorizontalValueSlider where ThumbView == DefaultThumb {
+extension HorizontalValueSlider where ThumbView == DefaultThumb {
     public init(value: Binding<V>, in bounds: ClosedRange<V> = 0.0...1.0, step: V.Stride = 0.001, trackView: TrackView, thumbSize: CGSize = CGSize(width: 27, height: 27), onEditingChanged: @escaping (Bool) -> Void = { _ in }) {
         self.init(value: value, in: bounds, step: step, trackView: trackView, thumbView: DefaultThumb(), thumbSize: thumbSize, onEditingChanged: onEditingChanged)
     }
 }
 
-public struct DefaultHorizontalTrack<V>: View where V : BinaryFloatingPoint, V.Stride : BinaryFloatingPoint {
-    let value: V
-    
-    public var body: some View {
-        XTrack(
-            value: value,
-            valueView: Rectangle()
-                .foregroundColor(.accentColor)
-                .frame(height: 3),
-            maskView: Rectangle(),
-            leadingOffset: 13.5,
-            trailingOffset: 13.5
-        )
-        .frame(height: 3)
-        .background(Color.secondary.opacity(0.25))
-        .cornerRadius(1.5)
-    }
-}
+
 
 public struct DefaultThumb: View {
     public var body: some View {
@@ -131,11 +114,10 @@ public struct DefaultThumb: View {
 }
 
 #if DEBUG
-struct  XHorizontalValueSlider_Previews: PreviewProvider {
-    
+struct HorizontalValueSlider_Previews: PreviewProvider {
     static var previews: some View {
-        XHorizontalValueSlider(value: .constant(0.5))
-//            .previewLayout(.fixed(width: 300, height: 100))
+        HorizontalValueSlider(value: .constant(0.5))
+            .previewLayout(.fixed(width: 300, height: 100))
     }
 }
 #endif
