@@ -2,151 +2,76 @@ import SwiftUI
 
 public typealias VTrack = VerticalValueTrack
 
-public struct VerticalValueTrack<V, ValueView: View, TrackShape: InsettableShape>: View where V : BinaryFloatingPoint {
-    @Environment(\.trackStyle)
-    var style
+public struct VerticalValueTrack<V, ValueView: View, MaskView: View>: View where V : BinaryFloatingPoint, V.Stride : BinaryFloatingPoint  {
+    let value: V
+    let bounds: ClosedRange<CGFloat>
+    let valueView: AnyView
+    let maskView: AnyView
+    let leadingOffset: CGFloat
+    let trailingOffset: CGFloat
     
-    @usableFromInline
-    var preferences = TrackPreferences()
-    
-    let value: Binding<V>
-    let bounds: ClosedRange<V>
-    let valueView: ValueView
-    let trackShape: TrackShape
-        
     public var body: some View {
-        GeometryReader { geometry in
-            self.valueView
-                .foregroundColor(self.valueColor)
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .mask(
-                    self.valueView
-                        .frame(
-                            width: geometry.size.width,
-                            height: distanceFromZero(
-                                overallLength: geometry.size.height,
-                                value: CGFloat(self.value.wrappedValue),
-                                bounds: CGFloat(self.bounds.lowerBound)...CGFloat(self.bounds.upperBound),
-                                startOffset: self.startOffset,
-                                endOffset: self.endOffset
-                            )
-                        )
-                        .fixedSize()
-                        .offset(
-                            y: -offsetFromCenterToValueDistanceCenter(
-                                overallLength: geometry.size.height,
-                                value: CGFloat(self.value.wrappedValue),
-                                bounds: CGFloat(self.bounds.lowerBound)...CGFloat(self.bounds.upperBound),
-                                startOffset: self.startOffset,
-                                endOffset: self.endOffset
-                            )
-                        )
-                )
-                .overlay(
-                    self.trackShape
-                        .strokeBorder(self.borderColor, lineWidth: self.borderWidth)
-                )
-                .background(self.backgroundColor)
-                    .mask(
-                        self.trackShape.frame(width: geometry.size.width, height: geometry.size.height)
-                )
-                .drawingGroup()
-        }
+        let value = CGFloat(self.value)
 
+        return GeometryReader { geometry in
+            ZStack {
+                self.valueView
+                    .frame(width: geometry.size.width, height: geometry.size.height)
+                    .mask(
+                        self.maskView
+                            .frame(
+                                width: geometry.size.width,
+                                height: distanceFromZero(
+                                    overallLength: geometry.size.height,
+                                    value: value,
+                                    bounds: self.bounds,
+                                    startOffset: self.leadingOffset,
+                                    endOffset: self.trailingOffset
+                                )
+                            )
+                            .fixedSize()
+                            .offset(
+                                y: -offsetFromCenterToValueDistanceCenter(
+                                    overallLength: geometry.size.height,
+                                    value: value,
+                                    bounds: self.bounds,
+                                    startOffset: self.leadingOffset,
+                                    endOffset: self.trailingOffset
+                                )
+                            )
+                    )
+            }
+            
+        }
+        .frame(minHeight: 1)
     }
 }
 
 extension VerticalValueTrack {
-    public init(value: Binding<V>, in bounds: ClosedRange<V> = 0.0...1.0, valueView: ValueView, trackShape: TrackShape) {
+    public init(value: V, in bounds: ClosedRange<V> = 0.0...1.0, valueView: ValueView, maskView: MaskView, leadingOffset: CGFloat = 0, trailingOffset: CGFloat = 0) {
         self.value = value
-        self.bounds = bounds
-        self.valueView = valueView
-        self.trackShape = trackShape
-    }
-}
-
-extension VerticalValueTrack where TrackShape == Capsule {
-    public init(value: Binding<V>, in bounds: ClosedRange<V> = 0.0...1.0, valueView: ValueView) {
-        self.init(value: value, in: bounds, valueView: valueView, trackShape: Capsule())
+        self.bounds = CGFloat(bounds.lowerBound)...CGFloat(bounds.upperBound)
+        self.valueView = AnyView(valueView)
+        self.maskView = AnyView(maskView)
+        self.leadingOffset = leadingOffset
+        self.trailingOffset = trailingOffset
     }
 }
 
 extension VerticalValueTrack where ValueView == Capsule {
-    public init(value: Binding<V>, in bounds: ClosedRange<V> = 0.0...1.0, trackShape: TrackShape) {
-        self.init(value: value, in: bounds, valueView: Capsule(), trackShape: trackShape)
+    public init(value: V, in bounds: ClosedRange<V> = 0.0...1.0, maskView: MaskView, leadingOffset: CGFloat = 0, trailingOffset: CGFloat = 0) {
+        self.init(value: value, in: bounds, valueView: Capsule(), maskView: maskView, leadingOffset: leadingOffset, trailingOffset: trailingOffset)
     }
 }
 
-extension VerticalValueTrack where TrackShape == Capsule, ValueView == Capsule {
-    public init(value: Binding<V>, in bounds: ClosedRange<V> = 0.0...1.0) {
-        self.init(value: value, in: bounds, valueView: Capsule(), trackShape: Capsule())
+extension VerticalValueTrack where MaskView == Capsule {
+    public init(value: V, in bounds: ClosedRange<V> = 0.0...1.0, valueView: ValueView, leadingOffset: CGFloat = 0, trailingOffset: CGFloat = 0) {
+        self.init(value: value, in: bounds, valueView: valueView, maskView: Capsule(), leadingOffset: leadingOffset, trailingOffset: trailingOffset)
     }
 }
 
-// MARK: Values
-
-extension VerticalValueTrack {
-    var valueColor: Color {
-        preferences.valueColor ?? style.valueColor
-    }
-    
-    var backgroundColor: Color {
-        preferences.backgroundColor ?? style.backgroundColor
-    }
-    
-    var borderColor: Color {
-        preferences.borderColor ?? style.borderColor
-    }
-    
-    var borderWidth: CGFloat {
-        preferences.borderWidth ?? style.borderWidth
-    }
-    
-    var startOffset: CGFloat {
-        preferences.startOffset ?? style.startOffset
-    }
-    
-    var endOffset: CGFloat {
-        preferences.endOffset ?? style.endOffset
-    }
-}
-
-// MARK: Modifiers
-
-public extension VerticalValueTrack {
-    @inlinable func valueColor(_ color: Color?) -> Self {
-        var copy = self
-        copy.preferences.valueColor = color
-        return copy
-    }
-    
-    @inlinable func backgroundColor(_ color: Color?) -> Self {
-        var copy = self
-        copy.preferences.backgroundColor = color
-        return copy
-    }
-
-    @inlinable func borderColor(_ color: Color?) -> Self {
-        var copy = self
-        copy.preferences.borderColor = color
-        return copy
-    }
-
-    @inlinable func borderWidth(_ length: CGFloat?) -> Self {
-        var copy = self
-        copy.preferences.borderWidth = length
-        return copy
-    }
-    
-    @inlinable func startOffset(_ length: CGFloat?) -> Self {
-        var copy = self
-        copy.preferences.startOffset = length
-        return copy
-    }
-    
-    @inlinable func endOffset(_ length: CGFloat?) -> Self {
-        var copy = self
-        copy.preferences.endOffset = length
-        return copy
+extension VerticalValueTrack where ValueView == Capsule, MaskView == Capsule {
+    public init(value: V, in bounds: ClosedRange<V> = 0.0...1.0, leadingOffset: CGFloat = 0, trailingOffset: CGFloat = 0) {
+        self.init(value: value, in: bounds, valueView: Capsule(), maskView: Capsule(), leadingOffset: leadingOffset, trailingOffset: trailingOffset)
     }
 }

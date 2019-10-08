@@ -102,17 +102,6 @@ extension HorizontalValueSlider where ThumbView == DefaultThumb {
     }
 }
 
-
-
-public struct DefaultThumb: View {
-    public var body: some View {
-        Circle()
-            .foregroundColor(.white)
-            .shadow(color: Color.black.opacity(0.3), radius: 2, x: 0, y: 1.5)
-            
-    }
-}
-
 #if DEBUG
 struct HorizontalValueSlider_Previews: PreviewProvider {
     static var previews: some View {
