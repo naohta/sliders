@@ -169,7 +169,7 @@ extension VerticalRangeSlider {
 
 extension VerticalRangeSlider where TrackView == VerticalRangeTrack<V, Capsule, Capsule> {
     public init(range: Binding<ClosedRange<V>>, in bounds: ClosedRange<V> = 0.0...1.0, step: V.Stride = 0.001, lowerThumbView: LowerThumbView, upperThumbView: UpperThumbView, onEditingChanged: @escaping (Bool) -> Void = { _ in }) {
-        let trackView = VerticalRangeTrack(range: range, in: bounds)
+        let trackView = VerticalRangeTrack(range: range.wrappedValue, in: bounds)
         self.init(range: range, in: bounds, step: step, trackView: trackView, lowerThumbView: lowerThumbView, upperThumbView: upperThumbView, onEditingChanged: onEditingChanged)
     }
 }
@@ -182,7 +182,7 @@ extension VerticalRangeSlider where LowerThumbView == Capsule, UpperThumbView ==
 
 extension VerticalRangeSlider where TrackView == VerticalRangeTrack<V, Capsule, Capsule>, LowerThumbView == Capsule, UpperThumbView == Capsule {
     public init(range: Binding<ClosedRange<V>>, in bounds: ClosedRange<V> = 0.0...1.0, step: V.Stride = 0.001, onEditingChanged: @escaping (Bool) -> Void = { _ in }) {
-        let trackView = VerticalRangeTrack(range: range, in: bounds)
+        let trackView = VerticalRangeTrack(range: range.wrappedValue, in: bounds)
         self.init(range: range, in: bounds, step: step, trackView: trackView, lowerThumbView: Capsule(), upperThumbView: Capsule(), onEditingChanged: onEditingChanged)
     }
 }
@@ -196,7 +196,7 @@ extension VerticalRangeSlider where LowerThumbView == UpperThumbView {
 
 extension VerticalRangeSlider where TrackView == VerticalRangeTrack<V, Capsule, Capsule>, LowerThumbView == UpperThumbView {
     public init(range: Binding<ClosedRange<V>>, in bounds: ClosedRange<V> = 0.0...1.0, step: V.Stride = 0.001, thumbView: LowerThumbView, onEditingChanged: @escaping (Bool) -> Void = { _ in }) {
-        let trackView = VerticalRangeTrack(range: range, in: bounds)
+        let trackView = VerticalRangeTrack(range: range.wrappedValue, in: bounds)
         self.init(range: range, in: bounds, step: step, trackView: trackView, lowerThumbView: thumbView, upperThumbView: thumbView, onEditingChanged: onEditingChanged)
     }
 }

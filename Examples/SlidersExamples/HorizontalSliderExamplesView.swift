@@ -77,6 +77,8 @@ struct HorizontalSliderExamplesView: View {
                         EmptyView(),
                     thumbSize: .zero
                 )
+                
+                HRangeTrack(range: 0.2...0.8)
 
 //
 //                HorizontalValuesTrack(valueColorPairs: [

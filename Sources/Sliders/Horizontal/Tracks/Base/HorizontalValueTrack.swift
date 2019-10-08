@@ -41,7 +41,6 @@ public struct HorizontalValueTrack<V, ValueView: View, MaskView: View>: View whe
                             )
                     )
             }
-            
         }
         .frame(minHeight: 1)
     }
